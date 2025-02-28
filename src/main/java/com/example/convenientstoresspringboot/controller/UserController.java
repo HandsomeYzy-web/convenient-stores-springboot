@@ -2,6 +2,10 @@ package com.example.convenientstoresspringboot.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.convenientstoresspringboot.common.Result;
+import com.example.convenientstoresspringboot.mapper.BonusMapper;
+import com.example.convenientstoresspringboot.mapper.OrderMapper;
+import com.example.convenientstoresspringboot.pojo.entity.Bonus;
+import com.example.convenientstoresspringboot.pojo.entity.Order;
 import com.example.convenientstoresspringboot.pojo.entity.User;
 import com.example.convenientstoresspringboot.pojo.entity.UserLoginLog;
 import com.example.convenientstoresspringboot.service.UserLoginLogService;
@@ -15,6 +19,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -78,9 +83,7 @@ public class UserController {
         user.setCreatedAt(null);
         user.setUpdatedAt(null);
         user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
-        if (!user.getRole().equals("member")) {
-            user.setUserId(userService.determineUserId(user.getRole()));
-        }
+        user.setUserId(userService.determineUserId(user.getRole()));
         userService.save(user);
         return Result.success("新增成功");
     }
@@ -124,8 +127,19 @@ public class UserController {
     public Result getUserInfoByRole(@RequestParam(defaultValue = "1") int page,
                                @RequestParam(defaultValue = "10") int limit,
                                     @RequestParam(defaultValue = "null") String role) {
-        Page<User> users = userService.getSuppliers(page, limit, role);
+        //
+        Page<User> users = userService.getUsers(page, limit, role);
         return Result.success(users);
+    }
+
+    @GetMapping
+    public Result findUserById(@RequestParam String userId) {
+        User user = userService.getUserByUserId(userId);
+        if (user != null) {
+            return Result.success(user);
+        } else {
+            return Result.error("用户不存在");
+        }
     }
 
     /**
@@ -154,5 +168,27 @@ public class UserController {
         } else {
             return Result.error("删除失败");
         }
+    }
+
+    @Autowired
+    private BonusMapper bonusMapper;
+
+    @GetMapping("/points")
+    public Result getUserPoints(@RequestParam String userId) {
+        Bonus bonus = bonusMapper.findByMemberId(userId);
+        if (bonus != null) {
+            return Result.success(bonus);
+        } else {
+            return Result.error("用户积分信息不存在");
+        }
+    }
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @GetMapping("/orders")
+    public Result getUserOrders(@RequestParam String userId) {
+        List<Order> orders = orderMapper.selectByMemberId(userId);
+        return Result.success(orders);
     }
 }

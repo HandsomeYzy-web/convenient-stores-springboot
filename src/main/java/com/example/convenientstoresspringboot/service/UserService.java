@@ -8,8 +8,9 @@ public interface UserService extends IService<User> {
     User getUserByUserIdAndRole(String userId, String role);
     boolean isPasswordValid(User user, String password);
     String determineRole(String userId);
-    Page<User> getSuppliers(int page, int limit, String role);
+    Page<User> getUsers(int page, int limit, String role);
     String determineUserId(String role);
     boolean updateUserById(User user);
     boolean removeByUserId(String userid);
+    User getUserByUserId(String userId);
 }

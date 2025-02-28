@@ -51,10 +51,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return role;
     }
 
-    public Page<User> getSuppliers(int page, int limit, String role) {
+    public Page<User> getUsers(int page, int limit, String role) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("role", role);
-
+        if (!role.equals("all")) {
+            queryWrapper.eq("role", role);
+        }
         // 分页查询
         Page<User> pageResult = new Page<>(page, limit);
         return userMapper.selectPage(pageResult, queryWrapper);
@@ -81,5 +82,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", userid);
         return userMapper.delete(queryWrapper) > 0;
+    }
+
+    @Override
+    public User getUserByUserId(String userId) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        return userMapper.selectOne(queryWrapper);
     }
 }

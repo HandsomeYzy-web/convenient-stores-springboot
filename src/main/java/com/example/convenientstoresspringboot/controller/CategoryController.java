@@ -12,25 +12,39 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/categories")
 public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping("/category1")
+    /**
+     * 获取一级分类
+     * @return
+     */
+    @GetMapping("/getCategory1")
     public Result getCategory1() {
         List<Category> category1List = categoryService.getCategory1();
         return Result.success(category1List);
     }
 
-    @GetMapping("/category2")
+    /**
+     * 获取二级分类
+     * @param category1Id
+     * @return
+     */
+    @GetMapping("/getCategory2")
     public Result getCategory2(@RequestParam Long category1Id) {
         List<Category> category2List = categoryService.getCategory2(category1Id);
         return Result.success(category2List);
     }
 
-    @GetMapping("/category3")
+    /**
+     * 获取三级分类
+     * @param category2Id
+     * @return
+     */
+    @GetMapping("/getCategory3")
     public Result getCategory3(@RequestParam Long category2Id) {
         List<Category> category3List = categoryService.getCategory3(category2Id);
         return Result.success(category3List);

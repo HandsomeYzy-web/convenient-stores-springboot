@@ -35,6 +35,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 处理 RuntimeException 异常
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public Result handleRuntimeException(RuntimeException e) {
+        log.error("Runtime error: ", e);
+        return Result.error(e.getMessage());
+    }
+
+    /**
      * 其他异常的处理方法
      */
     @ExceptionHandler(Exception.class)
